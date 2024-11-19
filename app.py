@@ -222,8 +222,8 @@ def login_user():
 
 if __name__ == '__main__':
     with app.app_context():
-        print("Creating tables...")
+        # print("Creating tables...")
         db.create_all()  # This should create all tables
-        print("Tables created successfully.")
+        # print("Tables created successfully.")
     app.run(debug=True)
 
