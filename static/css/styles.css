@@ -1,0 +1,16 @@
+body, sl-card, sl-input, sl-button {
+    font-family: sans-serif;
+}
+
+.login-card {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" class="sl-theme-dark">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/dark.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>My Flask App</title>
+  </head>
+  <body>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f5f5f5;">
+      <sl-card class="login-card" style="width: 400px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <h2 style="margin-bottom: 20px; color: #4a5568;">Login</h2>
+        <form id="login-form">
+          <sl-select 
+            name="role" 
+            label="Login as" 
+            required 
+            style="margin-bottom: 20px; width: 100%;">
+            <sl-option value="customer">Customer</sl-option>
+            <sl-option value="professional">Service Professional</sl-option>
+          </sl-select>
+          <sl-input 
+            type="email" 
+            name="email" 
+            label="Email" 
+            placeholder="Enter your email" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            type="password" 
+            name="password" 
+            label="Password" 
+            placeholder="Enter your password" 
+            required 
+            style="margin-bottom: 20px;">
+          </sl-input>
+          <sl-button type="submit" variant="primary" style="width: 100%; margin-bottom: 15px;">Login</sl-button>
+        </form>
+        <p style="margin: 0 0 15px; color: #718096;">Don't have an account?</p>
+        <div style="display: flex; justify-content: space-between;">
+          <sl-button type="text" href="/register/customer" style="color: #4c9aff;">Register as Customer</sl-button>
+          <sl-button type="text" href="/register/professional" style="color: #4c9aff;">Register as Professional</sl-button>
+        </div>
+      </sl-card>
+    </div>
+  
+    <script type="module">
+      const form = document.querySelector('#login-form');
+  
+      // Wait for controls to be defined before attaching form listeners
+      await Promise.all([
+        customElements.whenDefined('sl-button'),
+        customElements.whenDefined('sl-input'),
+        customElements.whenDefined('sl-select'),
+        customElements.whenDefined('sl-option')
+      ]).then(() => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+  
+          // Gather form data
+          const role = form.role.value;
+          const email = form.email.value;
+          const password = form.password.value;
+  
+          // Send a login request to the backend
+          const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role, email, password })
+          });
+  
+          // Handle response
+          if (response.ok) {
+            const data = await response.json();
+            alert(`Login successful! Welcome ${role}.`);
+            // Redirect or handle login success logic
+          } else {
+            const error = await response.json();
+            alert(`Login failed: ${error.error}`);
+          }
+        });
+      });
+    </script>
+  </body>
+  
+  
+</html>
+
+
+

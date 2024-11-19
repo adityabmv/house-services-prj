@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" class="sl-theme-dark">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/dark.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>My Flask App</title>
+  </head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f5f5f5;">
+      <sl-card class="register-card" style="width: 400px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <h2 style="margin-bottom: 20px; color: #4a5568;">Customer Registration</h2>
+        <form id="customer-registration-form">
+          <sl-input 
+            name="name" 
+            label="Full Name" 
+            placeholder="Enter your full name" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            type="email" 
+            name="email" 
+            label="Email" 
+            placeholder="Enter your email" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            type="password" 
+            name="password" 
+            label="Password" 
+            placeholder="Create a password" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            name="phone_number" 
+            label="Phone Number" 
+            placeholder="Enter your phone number" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            name="address" 
+            label="Address" 
+            placeholder="Enter your address" 
+            required 
+            style="margin-bottom: 15px;">
+          </sl-input>
+          <sl-input 
+            name="pin_code" 
+            label="Pin Code" 
+            placeholder="Enter your area pin code" 
+            required 
+            style="margin-bottom: 20px;">
+          </sl-input>
+          <sl-button type="submit" variant="primary" style="width: 100%; margin-bottom: 15px;">Register</sl-button>
+        </form>
+        <p style="margin: 0 0 15px; color: #718096;">Already have an account?</p>
+        <sl-button type="text" href="/login" style="color: #4c9aff;">Login</sl-button>
+      </sl-card>
+    </div>
+  
+    <script type="module">
+      const form = document.querySelector('#customer-registration-form');
+  
+      // Wait for controls to be defined before attaching form listeners
+      await Promise.all([
+        customElements.whenDefined('sl-button'),
+        customElements.whenDefined('sl-input')
+      ]).then(() => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+  
+          // Gather form data
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+  
+          // Send a registration request to the backend
+          const response = await fetch('/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+  
+          // Handle response
+          if (response.ok) {
+            alert('Customer registered successfully!');
+            window.location.href = '/login'; // Redirect to login
+          } else {
+            const error = await response.json();
+            alert(`Registration failed: ${error.error}`);
+          }
+        });
+      });
+    </script>
+  </body>
+</html> 
