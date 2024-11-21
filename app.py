@@ -1,11 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 import sqlite3
-
+from werkzeug.security import generate_password_hash
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import hashlib
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24) 
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///household_services.db'
@@ -21,6 +24,7 @@ class Admin(db.Model):
 
 
 class Customer(db.Model):
+    __tablename__ = 'customer'
     customer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
@@ -89,9 +93,119 @@ class Review(db.Model):
 def home():
     return render_template('index.html')
 
-@app.route('/register/customer', methods=['GET'])
+
+
+@app.route('/register/customer', methods=['GET', 'POST'])
 def register_customer():
-    return render_template('customer/register.html')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the form
+            data = request.get_json()
+            name = data['name']
+            email = data['email']
+            password = data['password']
+            phone_number = data['phone_number']
+            address = data['address']
+            pin_code = data['pin_code']
+
+            # Check if email already exists
+            if Customer.query.filter_by(email=email).first():
+                return jsonify({'error': 'Email already registered'}), 400
+
+            # Hash the password
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            # Create a new Customer record
+            new_customer = Customer(
+                name=name,
+                email=email,
+                password=hashed_password,
+                phone_number=phone_number,
+                address=address,
+                pin_code=pin_code
+            )
+            db.session.add(new_customer)
+            db.session.commit()
+
+            return jsonify({'message': 'Registration successful!'}), 201
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        # Handle GET request
+        return render_template('customer/register.html')
+
+
+@app.route('/login/customer', methods=['GET', 'POST'])
+def login_customer():
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the form
+            data = request.get_json()
+            email = data['email']
+            password = data['password']
+
+            # Hash the password
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            # Check if a customer exists with the given email and password
+            customer = Customer.query.filter_by(email=email, password=hashed_password).first()
+
+            if customer:
+                # Store user information in session (or use a token for API-based login)
+                session['customer_id'] = customer.customer_id
+                session['customer_name'] = customer.name
+                return jsonify({'message': 'Login successful!'}), 200
+            else:
+                return jsonify({'error': 'Invalid email or password'}), 401
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        # Render the login page
+        return render_template('customer/login.html')
+
+
+@app.route('/register/professional', methods=['GET', 'POST'])
+def register_professional():
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the form
+            data = request.get_json()
+            name = data['name']
+            email = data['email']
+            password = data['password']
+            phone_number = data['phone_number']
+            address = data['address']
+            service_category = data['service_category']
+            pin_code = data['pin_code']
+
+            # Check if email already exists
+            if Professional.query.filter_by(email=email).first():
+                return jsonify({'error': 'Email already registered'}), 400
+
+            # Hash the password
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+            # Create a new Professional record
+            new_professional = Professional(
+                name=name,
+                email=email,
+                password=hashed_password,
+                phone_number=phone_number,
+                address=address,
+                service_category=service_category,
+                pin_code=pin_code
+            )
+            db.session.add(new_professional)
+            db.session.commit()
+
+            return jsonify({'message': 'Registration successful!'}), 201
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        # Render the professional registration page
+        return render_template('professional/register_professional.html')
+
+
+
 
 # API Endpoints
 
@@ -166,6 +280,7 @@ def add_service_request():
     return jsonify({"message": "Service Request created successfully", "request_id": service_request.request_id})
 
 
+
 # Sample Route: Add a review
 @app.route('/reviews', methods=['POST'])
 def add_review():
@@ -184,11 +299,10 @@ def add_review():
 
 
 
-import hashlib
 
 def hash_password(password):
     """Hashes the password for storage."""
-    return hashlib.sha256(password.encode()).hexdigest()
+    return 
 
 def verify_password(stored_password, provided_password):
     """Verifies a hashed password."""
@@ -220,7 +334,14 @@ def login_user():
         return jsonify({"error": "Invalid email or password"}), 401
 
 
+
+with app.app_context():
+    db.create_all()
+    print("hellow")
+
+
 if __name__ == '__main__':
+    print("hellow")
     with app.app_context():
         # print("Creating tables...")
         db.create_all()  # This should create all tables

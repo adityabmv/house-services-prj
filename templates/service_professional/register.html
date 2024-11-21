@@ -7,22 +7,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/light.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Customer Registration</title>
+    <title>Service Professional Registration</title>
+    <style>
+      body, sl-card, sl-button, sl-input {
+        font-family: 'Roboto', sans-serif;
+      }
+    </style>
   </head>
   <body>
     <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: white;">
       <sl-card style="width: 400px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        <h2 style="margin-bottom: 20px; color: #2d3748;">Customer Registration</h2>
+        <h2 style="margin-bottom: 20px; color: #2d3748;">Service Professional Registration</h2>
         <form id="registration-form">
           <!-- Name -->
           <sl-input 
             type="text" 
             name="name" 
-            label="Full Name">
-            <sl-icon slot="prefix" name="person-circle" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Enter your full name as it appears on official documents." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Full Name" 
+            placeholder="Enter your full name" 
+            required>
+            <sl-icon slot="prefix" name="person-circle"></sl-icon>
           </sl-input>
           <br>
 
@@ -30,11 +34,10 @@
           <sl-input 
             type="email" 
             name="email" 
-            label="Email">
-            <sl-icon slot="prefix" name="envelope" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Provide a valid email address for verification." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Email" 
+            placeholder="Enter your email address" 
+            required>
+            <sl-icon slot="prefix" name="envelope"></sl-icon>
           </sl-input>
           <br>
 
@@ -42,11 +45,10 @@
           <sl-input 
             type="password" 
             name="password" 
-            label="Password">
-            <sl-icon slot="prefix" name="key" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Create a strong password with at least 8 characters." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Password" 
+            placeholder="Create a password" 
+            required>
+            <sl-icon slot="prefix" name="key"></sl-icon>
           </sl-input>
           <br>
 
@@ -54,11 +56,10 @@
           <sl-input 
             type="tel" 
             name="phone_number" 
-            label="Phone Number">
-            <sl-icon slot="prefix" name="telephone" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Provide a valid phone number for contact purposes." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Phone Number" 
+            placeholder="Enter your phone number" 
+            required>
+            <sl-icon slot="prefix" name="telephone"></sl-icon>
           </sl-input>
           <br>
 
@@ -66,11 +67,53 @@
           <sl-input 
             type="text" 
             name="address" 
-            label="Address">
-            <sl-icon slot="prefix" name="house" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Enter your complete residential address." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Address" 
+            placeholder="Enter your address" 
+            required>
+            <sl-icon slot="prefix" name="house"></sl-icon>
+          </sl-input>
+          <br>
+
+          <!-- Service Type -->
+          <sl-select 
+            name="service_type" 
+            label="Service Type" 
+            required>
+            <sl-option value="electrician">Electrician</sl-option>
+            <sl-option value="plumber">Plumber</sl-option>
+            <sl-option value="carpenter">Carpenter</sl-option>
+            <sl-option value="cleaner">Cleaner</sl-option>
+            <sl-option value="painter">Painter</sl-option>
+          </sl-select>
+          <br>
+
+          <!-- Experience -->
+          <sl-input 
+            type="text" 
+            name="experience" 
+            label="Experience" 
+            placeholder="E.g., 5 years, 10+ projects" 
+            style="margin-bottom: 15px;">
+            <sl-icon slot="prefix" name="award"></sl-icon>
+          </sl-input>
+          <br>
+
+          <!-- Description -->
+          <sl-textarea 
+            name="description" 
+            label="Description" 
+            placeholder="Tell us about your skills and expertise" 
+            rows="4" 
+            style="margin-bottom: 15px;">
+          </sl-textarea>
+          <br>
+
+          <!-- Profile Documents -->
+          <sl-input 
+            type="file" 
+            name="profile_docs" 
+            label="Upload Profile Documents">
+            <sl-icon slot="prefix" name="file-earmark"></sl-icon>
           </sl-input>
           <br>
 
@@ -78,11 +121,10 @@
           <sl-input 
             type="text" 
             name="pin_code" 
-            label="Pin Code">
-            <sl-icon slot="prefix" name="pin" style="margin-right: 10px;"></sl-icon>
-            <sl-tooltip content="Enter the postal code for your area." placement="right">
-              <sl-icon name="info-circle" slot="suffix"></sl-icon>
-            </sl-tooltip>
+            label="Pin Code" 
+            placeholder="Enter your pin code" 
+            required>
+            <sl-icon slot="prefix" name="pin"></sl-icon>
           </sl-input>
           <br>
 
@@ -92,36 +134,36 @@
       </sl-card>
     </div>
 
-    <script type="module">
+    <script>
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('#registration-form');
-      
+
         if (form) {
           form.addEventListener('submit', async (event) => {
             event.preventDefault();
-      
+
             // Use FormData to gather form data
             const formData = new FormData(form);
-      
+
             // Convert FormData to a plain JavaScript object
             const data = Object.fromEntries(formData.entries());
-      
+
             console.log('Form Data:', data);
-      
+
             try {
               // Send the form data to the backend
-              const response = await fetch('/register/customer', {
+              const response = await fetch('/register/professional', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data) // Serialize the data to JSON
               });
-      
+
               const jsonResponse = await response.json();
               console.log('Server Response:', jsonResponse);
-      
+
               if (response.ok) {
                 alert('Registration successful! Please login.');
-                window.location.href = '/login/customer';
+                window.location.href = '/login/professional'; // Redirect to login page for professionals
               } else {
                 alert(`Registration failed: ${jsonResponse.error}`);
               }
@@ -134,7 +176,6 @@
           console.error('Registration form not found');
         }
       });
-      
     </script>
   </body>
 </html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" class="sl-theme-light">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/shoelace-autoloader.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.18.0/cdn/themes/light.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Customer Login</title>
+  </head>
+  <body>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: white;">
+      <sl-card style="width: 400px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <h2 style="margin-bottom: 20px; color: #2d3748;">Customer Login</h2>
+        <form id="login-form">
+          <!-- Email -->
+          <sl-input 
+            type="email" 
+            name="email" 
+            label="Email" 
+            placeholder="Enter your email address" 
+            required 
+            style="margin-bottom: 15px;">
+            <sl-icon slot="prefix" name="envelope"></sl-icon>
+          </sl-input>
+
+          <!-- Password -->
+          <sl-input 
+            type="password" 
+            name="password" 
+            label="Password" 
+            placeholder="Enter your password" 
+            required 
+            style="margin-bottom: 20px;">
+            <sl-icon slot="prefix" name="key"></sl-icon>
+          </sl-input>
+
+          <!-- Submit Button -->
+          <sl-button type="submit" variant="primary" style="width: 100%;">Login</sl-button>
+        </form>
+
+        <!-- Register Link -->
+        <p style="margin-top: 15px; color: #718096;">Don't have an account?</p>
+        <sl-button type="text" href="/register/customer" style="color: #4c9aff;">Register Here</sl-button>
+      </sl-card>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('#login-form');
+
+        if (form) {
+          form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Use FormData to gather form data
+            const formData = new FormData(form);
+
+            // Convert FormData to a plain JavaScript object
+            const data = Object.fromEntries(formData.entries());
+
+            console.log('Login Data:', data);
+
+            try {
+              // Send the form data to the backend
+              const response = await fetch('/login/customer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data) // Serialize the data to JSON
+              });
+
+              const jsonResponse = await response.json();
+              console.log('Server Response:', jsonResponse);
+
+              if (response.ok) {
+                alert('Login successful! Redirecting...');
+                window.location.href = '/dashboard'; // Redirect to dashboard or another page
+              } else {
+                alert(`Login failed: ${jsonResponse.error}`);
+              }
+            } catch (error) {
+              console.error('Error during login:', error);
+              alert('An unexpected error occurred. Please try again later.');
+            }
+          });
+        } else {
+          console.error('Login form not found');
+        }
+      });
+    </script>
+  </body>
+</html>

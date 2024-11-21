@@ -1,7 +1,6 @@
-body, sl-card, sl-input, sl-button {
-    font-family: sans-serif;
-}
-
+body, sl-card, sl-button, sl-input {
+    font-family: 'Roboto', sans-serif;
+  }
 .login-card {
     max-width: 400px;
     margin: 100px auto;
